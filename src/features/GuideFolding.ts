@@ -227,6 +227,7 @@ function collectOuterListChunks(
 ): OuterListChunk[] {
   const roots: Root[] = [];
   let segmentStart = 0;
+  let notesIndent: string | null = null;
 
   const appendSegment = (segmentEnd: number) => {
     if (segmentStart <= segmentEnd) {
@@ -235,9 +236,26 @@ function collectOuterListChunks(
   };
 
   for (let line = 0; line <= editor.lastLine(); line++) {
-    if (editor.getLine(line).trim().length > 0) continue;
+    const text = editor.getLine(line);
+    if (text.trim().length > 0) {
+      if (parser.isListItem(text)) {
+        notesIndent = null;
+      } else if (notesIndent === null) {
+        notesIndent = text.match(/^[ \t]*/)?.[0] ?? "";
+      }
+      continue;
+    }
+    // Indented paragraph gaps belong to the item's continuation text.
+    if (
+      text.length > 0 &&
+      notesIndent !== null &&
+      notesIndent.length > 0 &&
+      text.startsWith(notesIndent)
+    )
+      continue;
     appendSegment(line - 1);
     segmentStart = line + 1;
+    notesIndent = null;
   }
   appendSegment(editor.lastLine());
 

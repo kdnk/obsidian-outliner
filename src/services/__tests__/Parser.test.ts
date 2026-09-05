@@ -140,6 +140,96 @@ describe("parseList", () => {
     expect(list!.print()).toBe("- one\n  - two\n\t- three");
   });
 
+  test.each([
+    { indent: "  ", extraIndent: "    " },
+    { indent: "\t", extraIndent: "\t" },
+    { indent: "\t", extraIndent: "  " },
+  ])(
+    "should preserve deeper fenced-code indentation with $indent and $extraIndent",
+    ({ indent, extraIndent }) => {
+      const parser = makeParser();
+      const text = [
+        "- code",
+        `${indent}\`\`\`js`,
+        `${indent}if (ready) {`,
+        `${indent}${extraIndent}run();`,
+        `${indent}}`,
+        `${indent}\`\`\``,
+        "- next",
+      ].join("\n");
+      const editor = makeEditor({ text, cursor: { line: 3, ch: 0 } });
+
+      const root = parser.parse(editor);
+
+      expect(root).toBeTruthy();
+      expect(root!.getChildren()[0].getLines()).toEqual([
+        "code",
+        "```js",
+        "if (ready) {",
+        `${extraIndent}run();`,
+        "}",
+        "```",
+      ]);
+      expect(root!.print()).toBe(text);
+    },
+  );
+
+  test("should retain equal-width mixed note indentation normalization", () => {
+    const parser = makeParser();
+    const editor = makeEditor({
+      text: "- one\n\tnote\n    more",
+      cursor: { line: 0, ch: 0 },
+    });
+
+    expect(parser.parse(editor)!.print()).toBe("- one\n\tnote\n\tmore");
+  });
+
+  test("should preserve nested code and deeper whitespace-only continuation lines", () => {
+    const parser = makeParser();
+    const text = [
+      "- one",
+      "\t- two",
+      "\t  ```plain text",
+      "\t  allData() -> {",
+      "\t    annotations",
+      "\t    ",
+      "\t  }",
+      "\t  ```",
+    ].join("\n");
+    const editor = makeEditor({ text, cursor: { line: 4, ch: 0 } });
+
+    const root = parser.parse(editor);
+
+    expect(root).toBeTruthy();
+    expect(root!.print()).toBe(text);
+    expect(root!.getChildren()[0].getChildren()[0].getLines()).toEqual([
+      "two",
+      "```plain text",
+      "allData() -> {",
+      "  annotations",
+      "  ",
+      "}",
+      "```",
+    ]);
+  });
+
+  test.each([
+    { indent: "    ", nextIndent: "  " },
+    { indent: "\t", nextIndent: "     " },
+    { indent: "    ", nextIndent: "\t " },
+  ])(
+    "should reject shallower or incompatible deeper note indentation $indent to $nextIndent",
+    ({ indent, nextIndent }) => {
+      const parser = makeParser();
+      const editor = makeEditor({
+        text: `- one\n${indent}note\n${nextIndent}more`,
+        cursor: { line: 0, ch: 0 },
+      });
+
+      expect(parser.parse(editor)).toBeNull();
+    },
+  );
+
   test("should error if note indent is not match", () => {
     const log = makeLogSink();
     const logger = makeLogger(log);

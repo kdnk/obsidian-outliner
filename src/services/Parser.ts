@@ -258,10 +258,16 @@ export class Parser {
         const expectedNoteIndentWidth = expectedNoteIndent
           ? this.getIndentWidth(expectedNoteIndent) - baseIndentWidth
           : null;
+        const hasDeeperNoteIndent =
+          expectedNoteIndent !== null &&
+          expectedNoteIndentWidth !== null &&
+          noteIndentWidth > expectedNoteIndentWidth &&
+          noteIndentRaw.startsWith(expectedNoteIndent);
 
         if (
           expectedNoteIndentWidth !== null &&
-          noteIndentWidth !== expectedNoteIndentWidth
+          noteIndentWidth !== expectedNoteIndentWidth &&
+          !hasDeeperNoteIndent
         ) {
           const expected = expectedNoteIndent!
             .replace(/ /g, "S")
@@ -287,7 +293,11 @@ export class Parser {
           currentList.setNotesIndent(noteIndentRaw);
         }
 
-        currentList.addLine(line.slice(noteIndentRaw.length));
+        // Keep indentation inside note content, such as a fenced code block.
+        const contentStart = hasDeeperNoteIndent
+          ? expectedNoteIndent.length
+          : noteIndentRaw.length;
+        currentList.addLine(line.slice(contentStart));
       } else {
         return error(
           `Unable to parse list: expected list item or note, got "${line}"`,
@@ -306,7 +316,7 @@ export class Parser {
     return stringWithSpacesRe.test(line);
   }
 
-  private isListItem(line: string) {
+  isListItem(line: string) {
     return listItemRe.test(line);
   }
 

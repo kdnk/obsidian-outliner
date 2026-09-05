@@ -42,6 +42,7 @@
     - test vaultのindent設定はtab文字を使う`useTab: true`と4 column幅の`tabSize: 4`を維持してください。`vault/.obsidian/app.json`はgitignore対象なので、trackedなsource of truthは`jest/test-config.js`の`TEST_VAULT_APP_CONFIG`とし、`jest/global-setup.js`がfull testのたびに適用します。indent操作が生成する統合specの期待値もtab文字にし、spaceへ正規化して差を隠さないでください。実Obsidianの各UI action直前はtitleだけでなくruntimeの`app.vault.config.useTab === true`と`tabSize === 4`も確認し、異なる場合は操作しないでください。
     - Obsidian の複数 window が開いている場合、open 後の 1 回だけのタイトル確認では不十分です。Computer Use の各 UI action 直前に `obsidian-cli vault=vault eval code='window.focus()'` で test vault renderer を focus し、fresh state のタイトルが test vault であることを確認してください。過去の element index や座標を再利用せず、対象 window を保証できない場合は action を実行しないでください。
     - `obsidian-cli vault=vault eval ...`が`Command "eval" not found`を返す一方でDeveloper commandが利用できる場合は、`obsidian-cli vault=vault dev:cdp method=Runtime.evaluate params='{"expression":"window.focus(); document.title","returnByValue":true}'`をfocusとtitle確認のfallbackとして使ってください。返値に`vault`が含まれ、`base`が含まれないことを各UI action直前に確認し、この確認ができない場合はactionを実行しないでください。
+    - 複数window環境で`dev:screenshot`の画像が対象vaultのDOMと一致しない場合は、`vault=vault dev:cdp method=Page.captureScreenshot`の`data`をPNGへdecodeして対象rendererを撮影してください。evalのtitleが正しくても画像が同じwindowを示すとは限りません。
 - Obsidian の DOM helper について
     - owner `Document` から detached element を作る場合は、native `document.createElement` や global helper を使わず、`src/obsidianDom.ts` の `getObsidianDomWindow(doc)` から `createDiv()` / `createSpan()` を呼んでください。Obsidian runtime は `Document.win` に helper を公開しますが、現在の `obsidian` 型定義では `Window` 上の helper が宣言されていないため、局所的な cast を増やさずこの adapter に集約してください。
 - 空リストmarkerについて
@@ -66,6 +67,7 @@
     - fold前後のheight差がsub-pixelの場合、`scrollSnapshot()` の `yMargin` をそのまま繰り返すとscroll elementの丸め誤差が累積します。snapshot effectを同じtransactionへ入れる前に、marginを `devicePixelRatio` に対応する物理pixel gridへ正規化してください。開閉中に1物理pixel未満の差が出ても、往復後に元位置へ戻り、誤差が蓄積しないことを長いリストで確認してください。
     - `.cm-indent::before` は Obsidian / CodeMirror が配置・仮想化・スクロールする描画源です。独立したスクロール overlay や座標 cache を再導入せず、描画の実確認が必要な変更では `npm run build-with-tests` 後に実 Obsidian の長い多段リストで上端と下端を確認してください。
     - outer guide は document chunk の開始・終了行を key とする CodeMirror widget decoration として各行へ配置してください。空行・空白だけの行・見出しで chunk を分割し、同じ chunk id の表示中 segment だけを一括 hover / toggle の対象にしてください。独立 overlay、screen 座標測定、座標 cache は追加しないでください。
+    - outer guideの空白行によるchunk分割では、対象itemの最初の継続本文行で確立した非空indent prefixを保つ段落間の空白行を継続本文として残してください。完全な空行とdedentした区切りは分割します。Parserが既存notes indentのraw prefixより深い継続行を受け入れる場合、余分なindentは本文として保持し、`print()`でround-tripすることを検証してください。
 - native chevron のスクロール保持について
     - scroll保持の対象は、desktop Live Previewではlistとheadingのnative `.collapse-indicator`、mobileではright fold controlsのbody classが有効な場合のlistとheadingです。mobile right fold controlsが無効な場合へ対象を広げないでください。
     - `contentDOM` のcapture phaseで`pointerdown`と`click`を受け、両eventで下端余白を必要な場合だけ復元して`scrollHeight`を読み、`click`では加えて補正済み`EditorView.scrollSnapshot()`を準備してください。pointer eventを伴わないkeyboardまたはprogrammaticな`click`でもreserve復元とlayout readを省略しないでください。eventを`preventDefault()`または`stopPropagation()`せず、native pointer操作ではhandlerへ`pointerdown` → `pointerup` → `click`のsequenceを渡してください。

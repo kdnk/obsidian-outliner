@@ -656,7 +656,10 @@ describe("GuideFoldingPluginValue decorations", () => {
     );
     const pluginValue = new GuideFoldingPluginValue(
       settings,
-      { parseRange: jest.fn().mockReturnValue([]) } as never,
+      {
+        parseRange: jest.fn().mockReturnValue([]),
+        isListItem: (line: string) => Parser.prototype.isListItem(line),
+      } as never,
       view as never,
     );
     expect(onChange).toHaveBeenCalledWith(
@@ -688,6 +691,7 @@ describe("GuideFoldingPluginValue decorations", () => {
   test.each([
     ["empty line", "- a\n    - child\n\n- b\n    - child"],
     ["spaces-only line", "- a\n    - child\n   \n- b\n    - child"],
+    ["list-level blank line", "- a\n\t- child\n\t\n- b\n\t- child"],
     ["heading", "- a\n    - child\n# Heading\n- b\n    - child"],
     ["paragraph", "- a\n    - child\ntext\n- b\n    - child"],
   ])("splits outer decoration chunks at a %s", (_name, text) => {
@@ -708,6 +712,50 @@ describe("GuideFoldingPluginValue decorations", () => {
       ["3:4", "3", "4"],
       ["3:4", "3", "4"],
     ]);
+    fixture.pluginValue.destroy();
+  });
+
+  test.each(["\t\t  ", "\t\t  \n\t\t  ", "\t\t    \n\t\t  "])(
+    "keeps a whitespace-only note-line paragraph gap inside one chunk: %j",
+    (gap) => {
+      const lines = [
+        "- a",
+        "\t- child",
+        "\t\t- grandchild",
+        "\t\t  first paragraph",
+        ...gap.split("\n"),
+        "\t\t  second paragraph",
+        "- sibling",
+      ];
+      const fixture = makeFixture(lines.join("\n"));
+
+      expect(fixture.pluginValue.decorations.size).toBe(lines.length);
+      expect(
+        renderOuterSegments(fixture.pluginValue.decorations).map(
+          ({ dataset }) => dataset.chunkId,
+        ),
+      ).toEqual(lines.map(() => `0:${lines.length - 1}`));
+      fixture.pluginValue.destroy();
+    },
+  );
+
+  test("keeps a base-indented paragraph gap after deeper fenced-code content in one chunk", () => {
+    const lines = [
+      "- a",
+      "\t- child",
+      "\t  ```plain text",
+      "\t    code",
+      "\t  ",
+      "\t  ```",
+      "- sibling",
+    ];
+    const fixture = makeFixture(lines.join("\n"));
+
+    expect(
+      renderOuterSegments(fixture.pluginValue.decorations).map(
+        ({ dataset }) => dataset.chunkId,
+      ),
+    ).toEqual(lines.map(() => "0:6"));
     fixture.pluginValue.destroy();
   });
 
@@ -2759,6 +2807,7 @@ describe("GuideFoldingPluginValue guide interactions", () => {
     };
     const semanticParser = new Parser(makeLogger(), makeSettings());
     const parser = {
+      isListItem: (line: string) => semanticParser.isListItem(line),
       parseRange: jest.fn(
         (editor: Reader, startLine: number, endLine: number) =>
           semanticParser.parseRange(editor, startLine, endLine),

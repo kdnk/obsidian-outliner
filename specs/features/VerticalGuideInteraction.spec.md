@@ -159,3 +159,32 @@
   - branch two
     - child two
 ```
+
+# outer guide should span a nested note paragraph gap and later siblings
+
+- applyState:
+
+```md
+- root
+	- child
+		- grandchild
+		  first paragraph
+		  
+		  second paragraph
+- sibling|
+	- sibling child
+```
+
+- clickGuide: {"line":6,"kind":"outer"}
+- assertState:
+
+```md
+- root #folded
+	- child
+		- grandchild
+		  first paragraph
+		  
+		  second paragraph
+- sibling| #folded
+	- sibling child
+```
