@@ -83,6 +83,8 @@ CodeMirror extensions and editor utilities. Registers keymaps, handles checkbox 
 
 ## Tests
 
+- For fold-scroll reserve changes, follow the real-Obsidian resize verification procedure in `AGENTS.md` (native chevron scroll retention).
+
 - **Unit tests** (`src/operations/__tests__/*.test.ts`, `src/services/__tests__/`) — use mock helpers from `src/__mocks__.ts` (`makeEditor`, `makeRoot`, `makeSettings`).
 - **Integration tests** (`specs/features/*.spec.md`, `jest/DefaultObsidianBehaviour.spec.md`) — Markdown files parsed by `jest/md-spec-transformer.js`. Each `# heading` is a test case; actions (`applyState`, `keydown`, `assertState`, etc.) drive a real Obsidian instance via WebSocket.
 

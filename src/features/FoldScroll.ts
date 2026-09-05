@@ -1,12 +1,17 @@
 import { EditorSelection } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 
-export function ensureFoldScrollReserve(view: EditorView): void {
-  const expected =
+export function foldScrollReserveHeight(view: EditorView): number {
+  return (
     view.scrollDOM.clientHeight -
     view.defaultLineHeight -
     view.documentPadding.top -
-    0.5;
+    0.5
+  );
+}
+
+export function ensureFoldScrollReserve(view: EditorView): void {
+  const expected = foldScrollReserveHeight(view);
   const current = Number.parseFloat(view.contentDOM.style.paddingBottom);
   if (
     Number.isFinite(expected) &&

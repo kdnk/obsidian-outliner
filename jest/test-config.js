@@ -6,6 +6,7 @@ const TEST_VAULT_APP_CONFIG = Object.freeze({
   useTab: true,
   tabSize: 4,
   legacyEditor: false,
+  propertiesInDocument: "visible",
 });
 
 function getTestPluginId() {

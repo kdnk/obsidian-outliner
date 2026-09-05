@@ -12,13 +12,13 @@ import {
   PluginValue,
   ViewUpdate,
   WidgetType,
-  scrollPastEnd,
 } from "@codemirror/view";
 
 import {
   ensureFoldScrollReserve,
   stableFoldScrollSnapshot,
 } from "./FoldScroll";
+import { foldScrollReserve } from "./FoldScrollReserve";
 
 import { MyEditorPosition, getEditorFromState } from "../editor";
 import { getObsidianDomWindow } from "../obsidianDom";
@@ -76,7 +76,7 @@ const SELECTED_OUTER_LIST_GUIDE_END_SELECTOR = `.${SELECTED_OUTER_LIST_GUIDE_END
 const CHUNK_LINE_ATTRIBUTE_RE = /^(0|[1-9]\d*)$/;
 
 export const GUIDE_FOLDING_SCROLL_PAST_END_EXTENSION: Extension =
-  scrollPastEnd();
+  foldScrollReserve();
 
 type GuideMeasurement = {
   indentGuides: Element[];
