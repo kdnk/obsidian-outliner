@@ -1,6 +1,6 @@
 {
   "name": "bullet",
-  "version": "5.14.6",
+  "version": "5.15.0",
   "description": "Work with your lists like in Workflowy or RoamResearch.",
   "main": "dist/main.js",
   "scripts": {
