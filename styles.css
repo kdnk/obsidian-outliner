@@ -492,3 +492,8 @@ html
 .bullet-zoom-separator {
   color: var(--text-faint);
 }
+
+.markdown-source-view.mod-cm6.bullet-zoom-active.is-live-preview.show-properties
+  .metadata-container {
+  display: none;
+}

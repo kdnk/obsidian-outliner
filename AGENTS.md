@@ -46,6 +46,8 @@
     - 複数window環境で`dev:screenshot`の画像が対象vaultのDOMと一致しない場合は、`vault=vault dev:cdp method=Page.captureScreenshot`の`data`をPNGへdecodeして対象rendererを撮影してください。evalのtitleが正しくても画像が同じwindowを示すとは限りません。
 - ズームと複数ペインの同期について
     - Obsidianは別ペインからの同期とfile loadを`userEvent: "set"`のtransactionで適用します。ズームの編集範囲filterでこれを拒否せず、非表示部分が変わった場合はズームを解除してください。native Undo/Redoは`filter: false`でfilterを迂回するため、同じ解除判定をStateField側にも置いてください。同じnoteを2ペインで開いた実検証で同期を確認してください。
+    - bulletクリックのズームはpointerdownからclickまでの移動距離でDnDと区別し、一度drag閾値を超えたら開始位置へ戻ってもzoomしないでください。checkboxとnative chevronのclickは対象外とし、listenerはViewPlugin destroy時に解除してください。
+    - ズーム中のextension再構成ではStateFieldが消えるため、transaction filterとbreadcrumb panelの更新はfield不在を許容してください。ズーム状態でpluginを無効化・再読込しても例外が出ないことを検証してください。
 - Obsidian の DOM helper について
     - owner `Document` から detached element を作る場合は、native `document.createElement` や global helper を使わず、`src/obsidianDom.ts` の `getObsidianDomWindow(doc)` から `createDiv()` / `createSpan()` を呼んでください。Obsidian runtime は `Document.win` に helper を公開しますが、現在の `obsidian` 型定義では `Window` 上の helper が宣言されていないため、局所的な cast を増やさずこの adapter に集約してください。
 - 空リストmarkerについて

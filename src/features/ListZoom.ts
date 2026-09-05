@@ -14,11 +14,13 @@ import {
   DecorationSet,
   EditorView,
   Panel,
+  ViewPlugin,
   ViewUpdate,
   showPanel,
 } from "@codemirror/view";
 
 import { Feature } from "./Feature";
+import { ListZoomInteraction } from "./ListZoomInteraction";
 
 import { MyEditor } from "../editor";
 import { getObsidianDomWindow } from "../obsidianDom";
@@ -109,7 +111,7 @@ export class ListZoomState {
           if (from < range.from || to > range.to) outside = true;
         });
         if (outside) return [];
-        const next = tr.state.field(this.field);
+        const next = tr.state.field(this.field, false);
         if (!next) return tr;
         const low = next.from + next.indent.length;
         const clamp = (pos: number) => Math.max(low, Math.min(next.to, pos));
@@ -202,6 +204,14 @@ export class ListZoom implements Feature {
   async load() {
     this.plugin.registerEditorExtension([
       this.zoom.extension,
+      ViewPlugin.define(
+        (view) =>
+          new ListZoomInteraction(
+            view,
+            () => this.zoom.range(view.state) !== null,
+            (from) => this.navigate(view, from),
+          ),
+      ),
       showPanel.from(this.zoom.field, (range) => (range ? this.panel : null)),
     ]);
     this.plugin.addCommand({
@@ -314,8 +324,7 @@ export class ListZoom implements Feature {
           if (mapped) this.snapshots.set(view, mapped);
         }
         if (
-          update.startState.field(this.zoom.field) !==
-          update.state.field(this.zoom.field)
+          this.zoom.range(update.startState) !== this.zoom.range(update.state)
         )
           render();
       },

@@ -7,7 +7,7 @@ import {
 } from "obsidian";
 
 import { getIndentUnit, indentString } from "@codemirror/language";
-import { StateEffect, StateField } from "@codemirror/state";
+import { StateEffect, StateField, Text } from "@codemirror/state";
 import { Decoration, DecorationSet, EditorView } from "@codemirror/view";
 
 import { CrossNoteMove, crossNoteHistory } from "./CrossNoteMove";
@@ -291,48 +291,74 @@ export class DragAndDrop implements Feature {
         this.crossTarget.snapshot !== target.state.doc
       )
         return;
-      const offset = target.posAtCoords({ x, y });
+      const offset = target.posAtCoords({ x, y }, false);
       if (offset === null) return;
-      const root = this.parser.parse(
-        targetEditor,
-        targetEditor.offsetToPos(offset),
+      const protectedBoundary = getProtectedDropBoundary(
+        target.state.doc,
+        offset,
       );
-      if (!root) return;
-      if (
-        this.crossTarget?.view !== target ||
-        !isSameRoots(this.crossTarget.root, root)
-      ) {
-        this.crossTarget = new DragAndDropState(
-          target,
-          targetEditor,
-          root,
-          state.list,
-        );
+      if (protectedBoundary === null) return;
+      const root =
+        protectedBoundary === undefined
+          ? this.parser.parse(targetEditor, targetEditor.offsetToPos(offset))
+          : null;
+      if (!root) {
+        this.crossTarget = null;
+        const line = target.state.doc.lineAt(protectedBoundary ?? offset);
+        const coords = target.coordsAtPos(line.from);
+        if (!coords) return;
+        const height = target.lineBlockAt(line.from).height;
+        const after =
+          protectedBoundary !== undefined ||
+          (line.length > 0 && y >= coords.top + height / 2);
+        insertion = after
+          ? Math.min(line.to + 1, target.state.doc.length)
+          : line.from;
+        const rect = target.contentDOM.getBoundingClientRect();
+        this.getDocumentContext(state.doc).dropZone.setCssStyles({
+          display: "block",
+          top: coords.top + (after ? height : 0) + "px",
+          left: rect.left + "px",
+          width: rect.width + "px",
+        });
+      } else {
+        if (
+          this.crossTarget?.view !== target ||
+          !isSameRoots(this.crossTarget.root, root)
+        ) {
+          this.crossTarget = new DragAndDropState(
+            target,
+            targetEditor,
+            root,
+            state.list,
+          );
+        }
+        const cross = this.crossTarget;
+        if (cross.snapshot !== target.state.doc) return;
+        cross.calculateNearestDropVariant(x, y);
+        const variant = cross.dropVariant;
+        if (!variant) return;
+        const list = variant.placeToMove;
+        insertion =
+          variant.whereToMove === "before"
+            ? target.state.doc.line(list.getFirstLineContentStart().line + 1)
+                .from
+            : target.state.doc.line(
+                list.getContentEndIncludingChildren().line + 1,
+              ).to;
+        // Insert at the next physical line to preserve surrounding line breaks.
+        if (
+          variant.whereToMove !== "before" &&
+          insertion < target.state.doc.length
+        )
+          insertion++;
+        indent =
+          list.getFirstLineIndent() +
+          (variant.whereToMove === "inside"
+            ? this.obisidian.getDefaultIndentChars()
+            : "");
+        this.drawDropZone(cross);
       }
-      const cross = this.crossTarget;
-      if (cross.snapshot !== target.state.doc) return;
-      cross.calculateNearestDropVariant(x, y);
-      const variant = cross.dropVariant;
-      if (!variant) return;
-      const list = variant.placeToMove;
-      insertion =
-        variant.whereToMove === "before"
-          ? target.state.doc.line(list.getFirstLineContentStart().line + 1).from
-          : target.state.doc.line(
-              list.getContentEndIncludingChildren().line + 1,
-            ).to;
-      // Insert at the next physical line to preserve surrounding line breaks.
-      if (
-        variant.whereToMove !== "before" &&
-        insertion < target.state.doc.length
-      )
-        insertion++;
-      indent =
-        list.getFirstLineIndent() +
-        (variant.whereToMove === "inside"
-          ? this.obisidian.getDefaultIndentChars()
-          : "");
-      this.drawDropZone(cross);
     } else {
       this.crossTarget = null;
       const rect = target.contentDOM.getBoundingClientRect();
@@ -891,4 +917,45 @@ function getEventDocument(e: Event) {
 
 function getViewFilePath(view: EditorView): string | undefined {
   return view.state.field(editorInfoField, false)?.file?.path;
+}
+
+/** Keep a moved list outside YAML and fenced code, even if code looks like a list. */
+function getProtectedDropBoundary(
+  doc: Text,
+  offset: number,
+): number | null | undefined {
+  const targetLine = doc.lineAt(offset).number;
+  let firstBodyLine = 1;
+  if (/^\uFEFF?---\s*$/.test(doc.line(1).text)) {
+    let closingLine = 2;
+    while (
+      closingLine <= doc.lines &&
+      !/^(---|\.\.\.)\s*$/.test(doc.line(closingLine).text)
+    ) {
+      closingLine++;
+    }
+    if (closingLine > doc.lines) return null;
+    if (targetLine <= closingLine) return doc.line(closingLine).to;
+    firstBodyLine = closingLine + 1;
+  }
+  let fence: string | undefined;
+  for (let number = firstBodyLine; number <= targetLine; number++) {
+    const text = doc.line(number).text;
+    const marker = /^\s*(`{3,}|~{3,})(.*)$/.exec(text);
+    if (fence) {
+      if (number === targetLine) return null;
+      if (
+        marker &&
+        marker[1][0] === fence[0] &&
+        marker[1].length >= fence.length &&
+        !marker[2].trim()
+      ) {
+        fence = undefined;
+      }
+    } else if (marker) {
+      if (number === targetLine) return null;
+      fence = marker[1];
+    }
+  }
+  return undefined;
 }

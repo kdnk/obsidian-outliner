@@ -196,3 +196,63 @@ test("clears zoom when a reused editor changes files without changing text", () 
   info.file = { path: "second.md" };
   expect(zoom.range(focused.update({}).state)).toBeNull();
 });
+
+test("removing the plugin extension while zoomed reveals the unchanged document", () => {
+  const { state, zoom } = setup();
+  const focused = state.update({ effects: setListZoom.of(7) }).state;
+  const removed = focused.update({
+    effects: StateEffect.reconfigure.of([]),
+  }).state;
+  expect(removed.doc.toString()).toBe(doc);
+  expect(zoom.range(removed)).toBeNull();
+});
+
+test("the breadcrumb panel tolerates the zoom field disappearing during plugin reload", async () => {
+  const extensions: Extension[] = [];
+  const feature = new ListZoom(
+    {
+      addCommand: () => undefined,
+      registerEditorExtension: (extension: Extension) =>
+        extensions.push(extension),
+    } as never,
+    new Parser(makeLogger(), makeSettings()),
+  );
+  await feature.load();
+  const labels: string[] = [];
+  const panelDom = {
+    classList: { add: () => undefined },
+    setAttribute: () => undefined,
+    replaceChildren: () => {
+      labels.length = 0;
+    },
+    createSpan: () => undefined,
+    createEl: (_tag: string, { text }: { text: string }) => {
+      labels.push(text);
+      return {
+        setAttribute: () => undefined,
+        addEventListener: () => undefined,
+      };
+    },
+  };
+  const focused = EditorState.create({ doc, extensions }).update({
+    effects: setListZoom.of(7),
+  }).state;
+  const view = {
+    state: focused,
+    dom: { ownerDocument: { win: { createDiv: () => panelDom } } },
+  };
+  const panel = (
+    feature as unknown as {
+      panel(view: unknown): import("@codemirror/view").Panel;
+    }
+  ).panel(view);
+  expect(labels).toContain("project");
+  // The callback can run as the panel extension is being torn down.
+  view.state = EditorState.create({ doc });
+  panel.update!({
+    startState: focused,
+    state: view.state,
+    docChanged: false,
+  } as never);
+  expect(labels).toEqual(["Whole note"]);
+});

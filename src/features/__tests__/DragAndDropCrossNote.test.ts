@@ -1,6 +1,6 @@
 import { editorInfoField } from "obsidian";
 
-import { history, undo } from "@codemirror/commands";
+import { history, redo, undo } from "@codemirror/commands";
 import {
   EditorState,
   StateField,
@@ -206,3 +206,67 @@ test("activates the exact destination pane and focuses the moved item after a su
   expect(setActiveLeaf).toHaveBeenCalledWith(targetLeaf, { focus: true });
   expect(target.focus).toHaveBeenCalledTimes(1);
 });
+
+test.each([
+  { text: "\n", y: 20, want: "\n- move\n\t- child" },
+  { text: "# Heading", y: 12, want: "# Heading\n- move\n\t- child" },
+  {
+    text: "```md\n- code\n```\nBody",
+    y: 72,
+    want: "```md\n- code\n```\nBody\n- move\n\t- child",
+  },
+  {
+    text: "---\ntags:\n- example\n---",
+    y: 40,
+    want: "---\ntags:\n- example\n---\n- move\n\t- child",
+  },
+  {
+    text: "Plain paragraph",
+    y: 12,
+    want: "Plain paragraph\n- move\n\t- child",
+  },
+  { text: "Plain paragraph", y: 0, want: "- move\n\t- child\nPlain paragraph" },
+  {
+    text: "Before\n\nAfter",
+    y: 20,
+    want: "Before\n- move\n\t- child\n\nAfter",
+  },
+  {
+    text: "---\ntitle: Example\n---",
+    y: 20,
+    want: "---\ntitle: Example\n---\n- move\n\t- child",
+  },
+  {
+    text: "---\ntitle: Example\n---\n",
+    y: 60,
+    want: "---\ntitle: Example\n---\n- move\n\t- child",
+  },
+])(
+  "moves into a non-list destination at a line boundary: $text / $y",
+  ({ text, y, want }) => {
+    const { source, target, internals, style } = setup(text);
+    internals.detectAndDrawDropZone(500, y);
+    expect(style.display).toBe("block");
+    internals.stopDragging();
+    expect(source.state.doc.toString()).toBe("- keep");
+    expect(target.state.doc.toString()).toBe(want);
+    undo(target);
+    expect(source.state.doc.toString()).toBe("- move\n\t- child\n- keep");
+    expect(target.state.doc.toString()).toBe(text);
+    redo(source);
+    expect(source.state.doc.toString()).toBe("- keep");
+    expect(target.state.doc.toString()).toBe(want);
+  },
+);
+
+test.each(["```md\n- code\n```", "~~~\nplain\n~~~", "---\ntitle: unfinished"])(
+  "does not drop into fenced code or unclosed frontmatter: %s",
+  (text) => {
+    const { source, target, internals, style } = setup(text);
+    internals.detectAndDrawDropZone(500, 20);
+    expect(style.display).toBe("none");
+    internals.stopDragging();
+    expect(source.state.doc.toString()).toBe("- move\n\t- child\n- keep");
+    expect(target.state.doc.toString()).toBe(text);
+  },
+);
