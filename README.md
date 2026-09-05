@@ -35,6 +35,22 @@ Obsidian also documents this flow in [Community plugins](https://help.obsidian.m
 2. Put the three files in `<vault>/.obsidian/plugins/bullet/`.
 3. Reload Obsidian, then enable **Bullet** under **Settings → Community plugins**.
 
+### Verify release artifacts
+
+Releases built with the attestation-enabled workflow include GitHub artifact attestations for `main.js`, `manifest.json`, and `styles.css`. These let you verify that the downloaded files were produced by this repository's release workflow. Older releases do not have attestations.
+
+With GitHub CLI installed and authenticated, run these commands from the directory containing the three downloaded files:
+
+```sh
+for artifact in main.js manifest.json styles.css; do
+  gh attestation verify "$artifact" \
+    --repo kdnk/obsidian-bullet \
+    --signer-workflow kdnk/obsidian-bullet/.github/workflows/release.yml || exit 1
+done
+```
+
+All three verifications must succeed. Attestations verify the files' origin and integrity; they do not guarantee that the plugin is free of bugs or vulnerabilities.
+
 ## Start with these controls
 
 Create a nested list, place the caret in one of its items, and try the following controls. A branch means the current item and all of its nested children.

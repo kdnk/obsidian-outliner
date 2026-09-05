@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
+      id-token: write
+      attestations: write
 
     steps:
       - name: Install Obsidian
@@ -69,6 +71,14 @@ jobs:
 
       - name: Build plugin
         run: npm run build
+
+      - name: Attest release artifacts
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            dist/main.js
+            manifest.json
+            styles.css
 
       - name: Create release
         env:
