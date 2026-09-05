@@ -101,9 +101,19 @@ Bullet can draw native-looking guides between nested items and beside each root-
 
 The separate **Fold the list** and **Unfold the list** commands operate on the item at the caret. These commands do not have default shortcuts, so you can assign your own under **Settings → Hotkeys**.
 
+### Focus on one branch
+
+Place the caret in an item and run **Bullet: Zoom into list**. Only that item and its descendants remain visible, with their indentation shifted toward the left edge. Editing still updates the original Markdown note.
+
+Use the breadcrumb buttons above the editor to return to an ancestor or **Whole note**. **Zoom out one level** and **Show whole note** are also available in the Command Palette. Zoom belongs to the current editor and resets on reload; no block IDs or additional notes are created. Edits that cross into hidden content are blocked. If native Undo or synchronization changes hidden content, Bullet reveals the whole note so the change is visible.
+
 ### Drag branches on desktop
 
-Drag a bullet, fold indicator, or checkbox to move its complete branch. Drag-and-drop is a desktop feature; the keyboard and Command Palette movement actions remain available on mobile.
+Drag a bullet, fold indicator, or checkbox to move its complete branch. To move it to another note, open both notes side by side in the same window, then drag into a list or an empty note. The insertion line shows the destination position and indentation.
+
+Undo or Redo in either editor restores both sides of a cross-note move while both editors remain open on those notes. If you have since edited the other note, undo those later edits there first. Drops onto unopened tabs or the file explorer are not supported.
+
+Drag-and-drop is a desktop feature; the keyboard and Command Palette movement actions remain available on mobile.
 
 ### Use Vim and mobile controls
 
@@ -125,6 +135,9 @@ Bullet registers these actions in Obsidian's Command Palette. You can assign cus
 | **Unfold the list**               | Unfold the item at the caret.                        |
 | **Insert note line**              | Add a continuation line without a bullet.            |
 | **Select list content**           | Expand selection through the current list scopes.    |
+| **Zoom into list**              | Focus the editor on the current item and its descendants. |
+| **Zoom out one level**          | Show the focused item’s parent branch. |
+| **Show whole note**             | Leave the focused view. |
 | **Show System Info**              | Display environment details for a bug report.        |
 
 ## Settings

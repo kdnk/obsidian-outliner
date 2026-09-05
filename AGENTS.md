@@ -28,6 +28,7 @@
     - この環境ではNode.js 22.23.1を`n`で実行できます。globalのNode.jsを切り替えずに検証するときは`n exec 22.23.1 <command>`を使ってください。たとえばunit testは`SKIP_OBSIDIAN=1 n exec 22.23.1 npx jest ...`で実行できます。
     - macOSでfull testを実行する前に、`~/Library/Application Support/obsidian/Local Storage/leveldb/LOCK`のownerを`lsof`で確認してください。小文字の`obsidian` CLI processがownerの場合、global setupの`killall Obsidian`では終了しないため、そのowner processを終了し、lock解放を確認してからtestを開始してください。lock file自体は削除しないでください。
     - 実Obsidianのmobile検証後にfull testを実行する場合は、test vaultをguardした状態で`app.emulateMobile(false)`へ戻し、workspace再構成後に対象noteを開き直してpluginを再読込してからtestを開始してください。mobile emulationはObsidian restart後も残る場合があり、その状態ではdesktop-onlyのDragAndDrop統合specがdrop無反応で一斉に失敗します。sourceを変更する前に、同じbundleをdesktopへ戻して`specs/features/DragAndDrop.spec.md`だけ再実行し、environment起因か確認してください。
+    - ノート間DnDの手動検証で作った左右分割はfull test前に閉じ、test noteを1ペインへ戻してください。狭いペインでlistが折り返すと`ArrowUp`が同じ物理行内を移動し、`ChangesApplicator.spec.md`のcursor期待値が失敗します。この場合はsourceを変更する前に1ペインで対象specを再実行してください。
     - `src` 配下の unit test だけを `npx jest` で直接実行するときは、必ず `SKIP_OBSIDIAN=1` を付けるか `npm run test:unit` を使ってください。付けない場合は Jest の global setup が実 Obsidian を終了し、`vault/test.md` を上書きします。
     - `.spec.md` の統合 spec やフルテストは `dist/main.js` を実行するため、`src` を変更した後に実行する場合は先に `npm run build-with-tests` を実行してください。
     - `src` を変更していない場合も、`dist/main.js` がproduction buildか不明なときは、フルテスト前に`npm run build-with-tests`を実行してください。
@@ -43,6 +44,8 @@
     - Obsidian の複数 window が開いている場合、open 後の 1 回だけのタイトル確認では不十分です。Computer Use の各 UI action 直前に `obsidian-cli vault=vault eval code='window.focus()'` で test vault renderer を focus し、fresh state のタイトルが test vault であることを確認してください。過去の element index や座標を再利用せず、対象 window を保証できない場合は action を実行しないでください。
     - `obsidian-cli vault=vault eval ...`が`Command "eval" not found`を返す一方でDeveloper commandが利用できる場合は、`obsidian-cli vault=vault dev:cdp method=Runtime.evaluate params='{"expression":"window.focus(); document.title","returnByValue":true}'`をfocusとtitle確認のfallbackとして使ってください。返値に`vault`が含まれ、`base`が含まれないことを各UI action直前に確認し、この確認ができない場合はactionを実行しないでください。
     - 複数window環境で`dev:screenshot`の画像が対象vaultのDOMと一致しない場合は、`vault=vault dev:cdp method=Page.captureScreenshot`の`data`をPNGへdecodeして対象rendererを撮影してください。evalのtitleが正しくても画像が同じwindowを示すとは限りません。
+- ズームと複数ペインの同期について
+    - Obsidianは別ペインからの同期とfile loadを`userEvent: "set"`のtransactionで適用します。ズームの編集範囲filterでこれを拒否せず、非表示部分が変わった場合はズームを解除してください。native Undo/Redoは`filter: false`でfilterを迂回するため、同じ解除判定をStateField側にも置いてください。同じnoteを2ペインで開いた実検証で同期を確認してください。
 - Obsidian の DOM helper について
     - owner `Document` から detached element を作る場合は、native `document.createElement` や global helper を使わず、`src/obsidianDom.ts` の `getObsidianDomWindow(doc)` から `createDiv()` / `createSpan()` を呼んでください。Obsidian runtime は `Document.win` に helper を公開しますが、現在の `obsidian` 型定義では `Window` 上の helper が宣言されていないため、局所的な cast を増やさずこの adapter に集約してください。
 - 空リストmarkerについて

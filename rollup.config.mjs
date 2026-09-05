@@ -21,6 +21,7 @@ export default (commandLineArgs) => {
       "@codemirror/state",
       "@codemirror/view",
       "@codemirror/language",
+      "@codemirror/commands",
     ],
     plugins: [
       replace({ preventAssignment: true }),

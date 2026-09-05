@@ -1,9 +1,16 @@
-import { Notice, Platform, Plugin } from "obsidian";
+import {
+  type MarkdownView,
+  Notice,
+  Platform,
+  Plugin,
+  editorInfoField,
+} from "obsidian";
 
 import { getIndentUnit, indentString } from "@codemirror/language";
 import { StateEffect, StateField } from "@codemirror/state";
 import { Decoration, DecorationSet, EditorView } from "@codemirror/view";
 
+import { CrossNoteMove, crossNoteHistory } from "./CrossNoteMove";
 import { Feature } from "./Feature";
 
 import { MyEditor, getEditorFromState } from "../editor";
@@ -28,6 +35,9 @@ export class DragAndDrop implements Feature {
   private documents = new Map<Document, DragAndDropDocumentContext>();
   private preStart: DragAndDropPreStartState | null = null;
   private state: DragAndDropState | null = null;
+  private crossTarget: DragAndDropState | null = null;
+  private crossMove: CrossNoteMove | null = null;
+  private crossDestination: EditorView | null = null;
 
   constructor(
     private plugin: Plugin,
@@ -38,7 +48,10 @@ export class DragAndDrop implements Feature {
   ) {}
 
   async load() {
-    this.plugin.registerEditorExtension([draggingLinesStateField]);
+    this.plugin.registerEditorExtension([
+      draggingLinesStateField,
+      crossNoteHistory,
+    ]);
     this.enableFeatureToggle();
     this.addManagedDocument(activeDocument);
     this.plugin.registerEvent(
@@ -232,20 +245,133 @@ export class DragAndDrop implements Feature {
 
     const state = new DragAndDropState(view, editor, root, list);
 
-    if (!state.hasDropVariants()) {
-      return;
-    }
-
     this.state = state;
     this.highlightDraggingLines();
   }
 
   private detectAndDrawDropZone(x: number, y: number) {
-    this.getState().calculateNearestDropVariant(x, y);
-    this.drawDropZone();
+    const state = this.getState();
+    this.crossMove = null;
+    this.crossDestination = null;
+    this.hideDropZone();
+    const element = state.doc.elementFromPoint?.(x, y) as HTMLElement | null;
+    const target = element
+      ? getEditorViewFromHTMLElement(element)
+      : typeof state.doc.elementFromPoint === "function"
+        ? null
+        : state.view;
+    if (!target) {
+      state.dropVariant = null;
+      return;
+    }
+    if (target === state.view) {
+      this.crossTarget = null;
+      state.calculateNearestDropVariant(x, y);
+      this.drawDropZone();
+      return;
+    }
+    state.dropVariant = null;
+    const sourcePath = getViewFilePath(state.view);
+    const targetPath = getViewFilePath(target);
+    if (
+      !sourcePath ||
+      !targetPath ||
+      sourcePath === targetPath ||
+      target.dom.ownerDocument !== state.doc ||
+      state.view.state.doc !== state.snapshot
+    )
+      return;
+    const targetEditor = getEditorFromState(target.state);
+    if (!targetEditor) return;
+    let insertion = 0;
+    let indent = "";
+    if (target.state.doc.length) {
+      if (
+        this.crossTarget?.view === target &&
+        this.crossTarget.snapshot !== target.state.doc
+      )
+        return;
+      const offset = target.posAtCoords({ x, y });
+      if (offset === null) return;
+      const root = this.parser.parse(
+        targetEditor,
+        targetEditor.offsetToPos(offset),
+      );
+      if (!root) return;
+      if (
+        this.crossTarget?.view !== target ||
+        !isSameRoots(this.crossTarget.root, root)
+      ) {
+        this.crossTarget = new DragAndDropState(
+          target,
+          targetEditor,
+          root,
+          state.list,
+        );
+      }
+      const cross = this.crossTarget;
+      if (cross.snapshot !== target.state.doc) return;
+      cross.calculateNearestDropVariant(x, y);
+      const variant = cross.dropVariant;
+      if (!variant) return;
+      const list = variant.placeToMove;
+      insertion =
+        variant.whereToMove === "before"
+          ? target.state.doc.line(list.getFirstLineContentStart().line + 1).from
+          : target.state.doc.line(
+              list.getContentEndIncludingChildren().line + 1,
+            ).to;
+      // Insert at the next physical line to preserve surrounding line breaks.
+      if (
+        variant.whereToMove !== "before" &&
+        insertion < target.state.doc.length
+      )
+        insertion++;
+      indent =
+        list.getFirstLineIndent() +
+        (variant.whereToMove === "inside"
+          ? this.obisidian.getDefaultIndentChars()
+          : "");
+      this.drawDropZone(cross);
+    } else {
+      this.crossTarget = null;
+      const rect = target.contentDOM.getBoundingClientRect();
+      this.getDocumentContext(state.doc).dropZone.setCssStyles({
+        display: "block",
+        top: rect.top + "px",
+        left: rect.left + "px",
+        width: rect.width + "px",
+      });
+    }
+    const from = state.view.state.doc.line(
+      state.list.getFirstLineContentStart().line + 1,
+    ).from;
+    const to = state.view.state.doc.line(
+      state.list.getContentEndIncludingChildren().line + 1,
+    ).to;
+    this.crossDestination = target;
+    this.crossMove = new CrossNoteMove(
+      state.view,
+      target,
+      { from, to },
+      insertion,
+      indent,
+      () =>
+        state.view.dom.isConnected &&
+        target.dom.isConnected &&
+        getViewFilePath(state.view) === sourcePath &&
+        getViewFilePath(target) === targetPath,
+      () =>
+        new Notice(
+          "Cannot undo or redo this move. Both original editors must remain open and writable. Undo later edits in the other note first.",
+          5000,
+        ),
+    );
   }
 
   private cancelDragging() {
+    this.crossMove = null;
+    this.crossDestination = null;
     this.getState().dropVariant = null;
     this.stopDragging();
   }
@@ -255,10 +381,32 @@ export class DragAndDrop implements Feature {
     this.hideDropZone();
     this.applyChanges();
     this.state = null;
+    this.crossTarget = null;
+    this.crossMove = null;
+    this.crossDestination = null;
   }
 
   private applyChanges() {
     const state = this.getState();
+    if (this.crossMove) {
+      if (this.crossMove.apply()) {
+        const target = this.crossDestination;
+        if (target) {
+          const editor = target.state.field(editorInfoField, false)?.editor;
+          const leaf = this.plugin.app.workspace
+            .getLeavesOfType("markdown")
+            .find((leaf) => (leaf.view as MarkdownView).editor === editor);
+          if (leaf)
+            this.plugin.app.workspace.setActiveLeaf(leaf, { focus: true });
+          target.focus();
+        }
+      } else
+        new Notice(
+          "The item cannot be moved. An editor changed or is unavailable.",
+          5000,
+        );
+      return;
+    }
     if (!state.dropVariant) {
       return;
     }
@@ -326,8 +474,7 @@ export class DragAndDrop implements Feature {
     });
   }
 
-  private drawDropZone() {
-    const state = this.getState();
+  private drawDropZone(state = this.getState()) {
     const { view, dropVariant } = state;
     if (!dropVariant) {
       return;
@@ -435,6 +582,7 @@ class DragAndDropState {
   public dropVariant: DropVariant | null = null;
   public leftPadding = 0;
   public tabWidth = 0;
+  public readonly snapshot;
 
   constructor(
     public readonly view: EditorView,
@@ -443,6 +591,7 @@ class DragAndDropState {
     public readonly list: List,
     public readonly doc: Document = view.dom.ownerDocument,
   ) {
+    this.snapshot = view.state.doc;
     this.collectDropVariants();
     this.calculateLeftPadding();
     this.calculateTabWidth();
@@ -738,4 +887,8 @@ function getEventDocument(e: Event) {
   }
 
   return activeDocument;
+}
+
+function getViewFilePath(view: EditorView): string | undefined {
+  return view.state.field(editorInfoField, false)?.file?.path;
 }

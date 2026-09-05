@@ -10,6 +10,7 @@ import { DragAndDrop } from "./features/DragAndDrop";
 import { EditorSelectionsBehaviourOverride } from "./features/EditorSelectionsBehaviourOverride";
 import { EnterBehaviourOverride } from "./features/EnterBehaviourOverride";
 import { Feature } from "./features/Feature";
+import { ListZoom } from "./features/ListZoom";
 import { ListsFoldingCommands } from "./features/ListsFoldingCommands";
 import { ListsMovementCommands } from "./features/ListsMovementCommands";
 import { MetaBackspaceBehaviourOverride } from "./features/MetaBackspaceBehaviourOverride";
@@ -66,6 +67,7 @@ export default class ObsidianBulletPlugin extends Plugin {
         this.operationPerformer,
       ),
       new ListsFoldingCommands(this, this.obsidianSettings),
+      new ListZoom(this, this.parser),
 
       // features based on settings.keepBodyTextInBullets
       new BulletTypingGuard(this, this.settings, this.logger),
