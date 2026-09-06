@@ -45,6 +45,8 @@
     - Obsidian の複数 window が開いている場合、open 後の 1 回だけのタイトル確認では不十分です。Computer Use の各 UI action 直前に `obsidian-cli vault=vault eval code='window.focus()'` で test vault renderer を focus し、fresh state のタイトルが test vault であることを確認してください。過去の element index や座標を再利用せず、対象 window を保証できない場合は action を実行しないでください。
     - `obsidian-cli vault=vault eval ...`が`Command "eval" not found`を返す一方でDeveloper commandが利用できる場合は、`obsidian-cli vault=vault dev:cdp method=Runtime.evaluate params='{"expression":"window.focus(); document.title","returnByValue":true}'`をfocusとtitle確認のfallbackとして使ってください。返値に`vault`が含まれ、`base`が含まれないことを各UI action直前に確認し、この確認ができない場合はactionを実行しないでください。
     - 複数window環境で`dev:screenshot`の画像が対象vaultのDOMと一致しない場合は、`vault=vault dev:cdp method=Page.captureScreenshot`の`data`をPNGへdecodeして対象rendererを撮影してください。evalのtitleが正しくても画像が同じwindowを示すとは限りません。
+- エディタごとの非同期処理について
+    - `getEditorFromState()`は呼び出すたびに新しい`MyEditor`ラッパーを返します。エディタごとの予約処理を置換・取り消すキーには、`getCodeMirrorView()`が返す同一の`EditorView`を使ってください。プラグイン終了時は、すべてのエディタの予約処理を取り消してください。
 - ズームと複数ペインの同期について
     - Obsidianは別ペインからの同期とfile loadを`userEvent: "set"`のtransactionで適用します。ズームの編集範囲filterでこれを拒否せず、非表示部分が変わった場合はズームを解除してください。native Undo/Redoは`filter: false`でfilterを迂回するため、同じ解除判定をStateField側にも置いてください。同じnoteを2ペインで開いた実検証で同期を確認してください。
     - bulletクリックのズームはpointerdownからclickまでの移動距離でDnDと区別し、一度drag閾値を超えたら開始位置へ戻ってもzoomしないでください。checkboxとnative chevronのclickは対象外とし、listenerはViewPlugin destroy時に解除してください。

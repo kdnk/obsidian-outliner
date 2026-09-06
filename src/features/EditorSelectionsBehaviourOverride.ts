@@ -60,8 +60,10 @@ export class EditorSelectionsBehaviourOverride implements Feature {
   private lastKey: string | null = null;
   private skipSelectionAdjustments = false;
   private suppressSelectionAdjustments = 0;
-  private pendingSelectionAdjustment: number | null = null;
-  private selectionAdjustmentVersion = 0;
+  private pendingSelectionAdjustments = new Map<
+    EditorView,
+    { timeout: number }
+  >();
 
   constructor(
     private plugin: Plugin,
@@ -80,17 +82,21 @@ export class EditorSelectionsBehaviourOverride implements Feature {
     ]);
   }
 
-  async unload() {}
+  async unload() {
+    this.resetState();
+  }
 
   resetState() {
     this.lastKey = null;
     this.skipSelectionAdjustments = false;
     this.suppressSelectionAdjustments = 0;
-    this.clearPendingSelectionAdjustment();
+    for (const view of this.pendingSelectionAdjustments.keys()) {
+      this.clearPendingSelectionAdjustment(view);
+    }
   }
 
   hasPendingSelectionAdjustment() {
-    return this.pendingSelectionAdjustment !== null;
+    return this.pendingSelectionAdjustments.size > 0;
   }
 
   beginSuppressingSelectionAdjustments() {
@@ -127,23 +133,26 @@ export class EditorSelectionsBehaviourOverride implements Feature {
       return null;
     }
 
-    this.clearPendingSelectionAdjustment();
-    const version = ++this.selectionAdjustmentVersion;
+    // getEditorFromState creates a new adapter for each transaction, so use
+    // the underlying view to keep repairs independent across editor panes.
+    const view = editor.getCodeMirrorView();
+    this.clearPendingSelectionAdjustment(view);
+    const pending = {
+      timeout: window.setTimeout(() => {
+        if (this.pendingSelectionAdjustments.get(view) !== pending) {
+          return;
+        }
+        this.pendingSelectionAdjustments.delete(view);
 
-    this.pendingSelectionAdjustment = window.setTimeout(() => {
-      this.pendingSelectionAdjustment = null;
-
-      if (version !== this.selectionAdjustmentVersion) {
-        return;
-      }
-
-      this.handleSelectionsChanges(
-        editor,
-        previousCursor,
-        previousFoldedLines,
-        pressedKey,
-      );
-    }, 0);
+        this.handleSelectionsChanges(
+          editor,
+          previousCursor,
+          previousFoldedLines,
+          pressedKey,
+        );
+      }, 0),
+    };
+    this.pendingSelectionAdjustments.set(view, pending);
 
     return null;
   };
@@ -226,13 +235,12 @@ export class EditorSelectionsBehaviourOverride implements Feature {
     this.lastKey = null;
   };
 
-  private clearPendingSelectionAdjustment() {
-    if (this.pendingSelectionAdjustment !== null) {
-      window.clearTimeout(this.pendingSelectionAdjustment);
-      this.pendingSelectionAdjustment = null;
+  private clearPendingSelectionAdjustment(view: EditorView) {
+    const pending = this.pendingSelectionAdjustments.get(view);
+    if (pending) {
+      window.clearTimeout(pending.timeout);
+      this.pendingSelectionAdjustments.delete(view);
     }
-
-    this.selectionAdjustmentVersion++;
   }
 
   private getSingleCursor(state: EditorState): MyEditorPosition | null {

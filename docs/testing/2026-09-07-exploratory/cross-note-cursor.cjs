@@ -117,6 +117,7 @@ function setup({ separateFeatures = false } = {}) {
     };
     const adapter = {
       name,
+      getCodeMirrorView: () => view,
       getCursor: () => adapter.offsetToPos(view.state.selection.main.head),
       getLine: (line) => view.state.doc.line(line + 1).text,
       lastLine: () => view.state.doc.lines - 1,

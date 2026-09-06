@@ -1,0 +1,302 @@
+{
+  "node": "v22.23.1",
+  "productSourcesEditedByHarness": false,
+  "status": "passed",
+  "failures": [],
+  "results": [
+    {
+      "case": "single-editor selection control",
+      "source": {
+        "line": 0,
+        "ch": 2
+      },
+      "target": {
+        "line": 0,
+        "ch": 2
+      },
+      "repairs": ["source", "source"],
+      "events": [
+        ["schedule", 1],
+        [
+          "dispatch",
+          "source",
+          null,
+          {
+            "line": 0,
+            "ch": 0
+          }
+        ],
+        ["schedule", 2],
+        [
+          "dispatch",
+          "source",
+          null,
+          {
+            "line": 0,
+            "ch": 2
+          }
+        ]
+      ]
+    },
+    {
+      "case": "same-turn two-editor selection",
+      "source": {
+        "line": 0,
+        "ch": 2
+      },
+      "target": {
+        "line": 0,
+        "ch": 2
+      },
+      "repairs": ["source", "target", "source", "target"],
+      "events": [
+        ["schedule", 1],
+        [
+          "dispatch",
+          "source",
+          null,
+          {
+            "line": 0,
+            "ch": 0
+          }
+        ],
+        ["schedule", 2],
+        [
+          "dispatch",
+          "target",
+          null,
+          {
+            "line": 0,
+            "ch": 0
+          }
+        ],
+        ["schedule", 3],
+        [
+          "dispatch",
+          "source",
+          null,
+          {
+            "line": 0,
+            "ch": 2
+          }
+        ],
+        ["schedule", 4],
+        [
+          "dispatch",
+          "target",
+          null,
+          {
+            "line": 0,
+            "ch": 2
+          }
+        ]
+      ]
+    },
+    {
+      "case": "cross-note history, production shared feature",
+      "stages": [
+        {
+          "stage": "initial: both cursors in content",
+          "source": {
+            "line": 0,
+            "ch": 2
+          },
+          "target": {
+            "line": 0,
+            "ch": 2
+          },
+          "sourceDoc": "- Alpha\n\t- child\n- Beta",
+          "targetDoc": "- Destination"
+        },
+        {
+          "stage": "move",
+          "source": {
+            "line": 0,
+            "ch": 0
+          },
+          "target": {
+            "line": 1,
+            "ch": 3
+          },
+          "sourceDoc": "- Beta",
+          "targetDoc": "- Destination\n\t- Alpha\n\t\t- child"
+        },
+        {
+          "stage": "destination undo",
+          "source": {
+            "line": 0,
+            "ch": 2
+          },
+          "target": {
+            "line": 0,
+            "ch": 2
+          },
+          "sourceDoc": "- Alpha\n\t- child\n- Beta",
+          "targetDoc": "- Destination"
+        },
+        {
+          "stage": "click source Alpha text",
+          "source": {
+            "line": 0,
+            "ch": 4
+          },
+          "target": {
+            "line": 0,
+            "ch": 2
+          },
+          "sourceDoc": "- Alpha\n\t- child\n- Beta",
+          "targetDoc": "- Destination"
+        },
+        {
+          "stage": "source redo",
+          "source": {
+            "line": 0,
+            "ch": 2
+          },
+          "target": {
+            "line": 1,
+            "ch": 3
+          },
+          "sourceDoc": "- Beta",
+          "targetDoc": "- Destination\n\t- Alpha\n\t\t- child"
+        }
+      ],
+      "repairsAfterSourceRedo": ["source", "target", "source"],
+      "eventsAfterSourceRedo": [
+        ["schedule", 5],
+        ["schedule", 6],
+        [
+          "dispatch",
+          "target",
+          "redo",
+          {
+            "line": 1,
+            "ch": 3
+          }
+        ],
+        [
+          "dispatch",
+          "source",
+          "redo",
+          {
+            "line": 0,
+            "ch": 0
+          }
+        ],
+        ["schedule", 7],
+        [
+          "dispatch",
+          "source",
+          null,
+          {
+            "line": 0,
+            "ch": 2
+          }
+        ]
+      ]
+    },
+    {
+      "case": "cross-note history, one feature per editor control",
+      "stages": [
+        {
+          "stage": "initial: both cursors in content",
+          "source": {
+            "line": 0,
+            "ch": 2
+          },
+          "target": {
+            "line": 0,
+            "ch": 2
+          },
+          "sourceDoc": "- Alpha\n\t- child\n- Beta",
+          "targetDoc": "- Destination"
+        },
+        {
+          "stage": "move",
+          "source": {
+            "line": 0,
+            "ch": 0
+          },
+          "target": {
+            "line": 1,
+            "ch": 3
+          },
+          "sourceDoc": "- Beta",
+          "targetDoc": "- Destination\n\t- Alpha\n\t\t- child"
+        },
+        {
+          "stage": "destination undo",
+          "source": {
+            "line": 0,
+            "ch": 2
+          },
+          "target": {
+            "line": 0,
+            "ch": 2
+          },
+          "sourceDoc": "- Alpha\n\t- child\n- Beta",
+          "targetDoc": "- Destination"
+        },
+        {
+          "stage": "click source Alpha text",
+          "source": {
+            "line": 0,
+            "ch": 4
+          },
+          "target": {
+            "line": 0,
+            "ch": 2
+          },
+          "sourceDoc": "- Alpha\n\t- child\n- Beta",
+          "targetDoc": "- Destination"
+        },
+        {
+          "stage": "source redo",
+          "source": {
+            "line": 0,
+            "ch": 2
+          },
+          "target": {
+            "line": 1,
+            "ch": 3
+          },
+          "sourceDoc": "- Beta",
+          "targetDoc": "- Destination\n\t- Alpha\n\t\t- child"
+        }
+      ],
+      "repairsAfterSourceRedo": ["source", "target", "source"],
+      "eventsAfterSourceRedo": [
+        ["schedule", 5],
+        ["schedule", 6],
+        [
+          "dispatch",
+          "target",
+          "redo",
+          {
+            "line": 1,
+            "ch": 3
+          }
+        ],
+        [
+          "dispatch",
+          "source",
+          "redo",
+          {
+            "line": 0,
+            "ch": 0
+          }
+        ],
+        ["schedule", 7],
+        [
+          "dispatch",
+          "source",
+          null,
+          {
+            "line": 0,
+            "ch": 2
+          }
+        ]
+      ]
+    }
+  ]
+}
