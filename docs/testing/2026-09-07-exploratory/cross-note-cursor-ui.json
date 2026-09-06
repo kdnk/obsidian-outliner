@@ -1,0 +1,247 @@
+[
+  {
+    "phase": "cross-note-drag",
+    "title": "CUA destination 20260907 - vault - Obsidian 1.14.0",
+    "useTab": true,
+    "tabSize": 4,
+    "mobile": false,
+    "note": "CUA destination 20260907.md",
+    "cursor": {
+      "line": 4,
+      "ch": 3
+    },
+    "selections": [
+      {
+        "anchor": {
+          "line": 4,
+          "ch": 3
+        },
+        "head": {
+          "line": 4,
+          "ch": 3
+        }
+      }
+    ],
+    "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n\t- Alpha\n\t\t- Alpha child\n\t\t\t- Alpha grandchild\n\t\t- Alpha leaf\n- Destination end\n",
+    "panes": [
+      {
+        "note": "CUA exploration 20260907.md",
+        "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n"
+      },
+      {
+        "note": "CUA destination 20260907.md",
+        "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n\t- Alpha\n\t\t- Alpha child\n\t\t\t- Alpha grandchild\n\t\t- Alpha leaf\n- Destination end\n"
+      }
+    ]
+  },
+  {
+    "phase": "cross-note-undo",
+    "title": "CUA destination 20260907 - vault - Obsidian 1.14.0",
+    "useTab": true,
+    "tabSize": 4,
+    "mobile": false,
+    "note": "CUA destination 20260907.md",
+    "cursor": {
+      "line": 0,
+      "ch": 0
+    },
+    "selections": [
+      {
+        "anchor": {
+          "line": 0,
+          "ch": 0
+        },
+        "head": {
+          "line": 0,
+          "ch": 0
+        }
+      }
+    ],
+    "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n- Destination end\n",
+    "panes": [
+      {
+        "note": "CUA exploration 20260907.md",
+        "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n"
+      },
+      {
+        "note": "CUA destination 20260907.md",
+        "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n- Destination end\n"
+      }
+    ]
+  },
+  {
+    "phase": "cross-note-redo",
+    "title": "CUA destination 20260907 - vault - Obsidian 1.14.0",
+    "useTab": true,
+    "tabSize": 4,
+    "mobile": false,
+    "note": "CUA destination 20260907.md",
+    "cursor": {
+      "line": 0,
+      "ch": 0
+    },
+    "selections": [
+      {
+        "anchor": {
+          "line": 0,
+          "ch": 0
+        },
+        "head": {
+          "line": 0,
+          "ch": 0
+        }
+      }
+    ],
+    "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n\t- Alpha\n\t\t- Alpha child\n\t\t\t- Alpha grandchild\n\t\t- Alpha leaf\n- Destination end\n",
+    "panes": [
+      {
+        "note": "CUA exploration 20260907.md",
+        "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n"
+      },
+      {
+        "note": "CUA destination 20260907.md",
+        "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n\t- Alpha\n\t\t- Alpha child\n\t\t\t- Alpha grandchild\n\t\t- Alpha leaf\n- Destination end\n"
+      }
+    ]
+  },
+  {
+    "phase": "cross-note-source-undo",
+    "title": "CUA exploration 20260907 - vault - Obsidian 1.14.0",
+    "useTab": true,
+    "tabSize": 4,
+    "mobile": false,
+    "note": "CUA exploration 20260907.md",
+    "cursor": {
+      "line": 11,
+      "ch": 0
+    },
+    "selections": [
+      {
+        "anchor": {
+          "line": 11,
+          "ch": 0
+        },
+        "head": {
+          "line": 11,
+          "ch": 0
+        }
+      }
+    ],
+    "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n",
+    "panes": [
+      {
+        "note": "CUA exploration 20260907.md",
+        "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n"
+      },
+      {
+        "note": "CUA destination 20260907.md",
+        "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n- Destination end\n"
+      }
+    ]
+  },
+  {
+    "phase": "bug-cross-note-undo-typing",
+    "title": "CUA exploration 20260907 - vault - Obsidian 1.14.0",
+    "useTab": true,
+    "tabSize": 4,
+    "mobile": false,
+    "note": "CUA exploration 20260907.md",
+    "cursor": {
+      "line": 11,
+      "ch": 3
+    },
+    "selections": [
+      {
+        "anchor": {
+          "line": 11,
+          "ch": 3
+        },
+        "head": {
+          "line": 11,
+          "ch": 3
+        }
+      }
+    ],
+    "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- X- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n",
+    "panes": [
+      {
+        "note": "CUA exploration 20260907.md",
+        "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- X- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n"
+      },
+      {
+        "note": "CUA destination 20260907.md",
+        "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n- Destination end\n"
+      }
+    ]
+  },
+  {
+    "phase": "bug-repeat-source-undo",
+    "title": "CUA exploration 20260907 - vault - Obsidian 1.14.0",
+    "useTab": true,
+    "tabSize": 4,
+    "mobile": false,
+    "note": "CUA exploration 20260907.md",
+    "cursor": {
+      "line": 11,
+      "ch": 2
+    },
+    "selections": [
+      {
+        "anchor": {
+          "line": 11,
+          "ch": 2
+        },
+        "head": {
+          "line": 11,
+          "ch": 2
+        }
+      }
+    ],
+    "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n",
+    "panes": [
+      {
+        "note": "CUA exploration 20260907.md",
+        "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n"
+      },
+      {
+        "note": "CUA destination 20260907.md",
+        "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n- Destination end\n"
+      }
+    ]
+  },
+  {
+    "phase": "bug-roundtrip-source-undo",
+    "title": "CUA exploration 20260907 - vault - Obsidian 1.14.0",
+    "useTab": true,
+    "tabSize": 4,
+    "mobile": false,
+    "note": "CUA exploration 20260907.md",
+    "cursor": {
+      "line": 11,
+      "ch": 2
+    },
+    "selections": [
+      {
+        "anchor": {
+          "line": 11,
+          "ch": 2
+        },
+        "head": {
+          "line": 11,
+          "ch": 2
+        }
+      }
+    ],
+    "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n",
+    "panes": [
+      {
+        "note": "CUA exploration 20260907.md",
+        "doc": "---\ntags:\n  - exploratory-test\n---\n\n# Exploratory test\n\n- Alpha\n\t- Alpha child\n\t\t- Alpha grandchild\n\t- Alpha leaf\n- Beta\n\t- Beta child\n- Gamma\n\n## Second chunk\n\n1. Ordered parent\n\t1. Ordered child\n\t2. Ordered sibling\n2. Ordered next\n\n- [ ] Task parent\n\t- [ ] Task child\n- [x] Completed task\n"
+      },
+      {
+        "note": "CUA destination 20260907.md",
+        "doc": "# Destination\n\n- Destination parent\n\t- Existing child\n- Destination end\n"
+      }
+    ]
+  }
+]

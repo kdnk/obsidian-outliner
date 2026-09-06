@@ -1,0 +1,316 @@
+{
+  "100": [
+    {
+      "stage": "before",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1927
+      },
+      "control": {
+        "text": "- スクロール確認 18",
+        "rect": {
+          "x": 366,
+          "y": 99.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 99.875,
+          "right": 381,
+          "bottom": 126.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 108.0625,
+          "width": 10,
+          "height": 10,
+          "top": 108.0625,
+          "right": 381,
+          "bottom": 118.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 173.3333282470703,
+        "target": {}
+      }
+    },
+    {
+      "stage": "fold",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1927
+      },
+      "control": {
+        "text": "- スクロール確認 18…",
+        "rect": {
+          "x": 366,
+          "y": 99.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 99.875,
+          "right": 381,
+          "bottom": 126.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 108.0625,
+          "width": 10,
+          "height": 10,
+          "top": 108.0625,
+          "right": 381,
+          "bottom": 118.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 113.33333587646484,
+        "target": {}
+      }
+    },
+    {
+      "stage": "unfold",
+      "status": "not_completed_mac_locked"
+    }
+  ],
+  "160": [
+    {
+      "stage": "before",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1867
+      },
+      "control": {
+        "text": "- スクロール確認 18",
+        "rect": {
+          "x": 366,
+          "y": 159.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 159.875,
+          "right": 381,
+          "bottom": 186.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 168.0625,
+          "width": 10,
+          "height": 10,
+          "top": 168.0625,
+          "right": 381,
+          "bottom": 178.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 413.3333435058594,
+        "target": {}
+      }
+    },
+    {
+      "stage": "fold",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1867
+      },
+      "control": {
+        "text": "- スクロール確認 18…",
+        "rect": {
+          "x": 366,
+          "y": 159.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 159.875,
+          "right": 381,
+          "bottom": 186.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 168.0625,
+          "width": 10,
+          "height": 10,
+          "top": 168.0625,
+          "right": 381,
+          "bottom": 178.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 173.3333282470703,
+        "target": {}
+      }
+    },
+    {
+      "stage": "unfold",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1867
+      },
+      "control": {
+        "text": "- スクロール確認 18",
+        "rect": {
+          "x": 366,
+          "y": 159.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 159.875,
+          "right": 381,
+          "bottom": 186.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 168.0625,
+          "width": 10,
+          "height": 10,
+          "top": 168.0625,
+          "right": 381,
+          "bottom": 178.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 173.3333282470703,
+        "target": {}
+      }
+    }
+  ],
+  "400": [
+    {
+      "stage": "before",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1627
+      },
+      "control": {
+        "text": "- スクロール確認 18",
+        "rect": {
+          "x": 366,
+          "y": 399.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 399.875,
+          "right": 381,
+          "bottom": 426.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 408.0625,
+          "width": 10,
+          "height": 10,
+          "top": 408.0625,
+          "right": 381,
+          "bottom": 418.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 461.6666564941406,
+        "target": {}
+      }
+    },
+    {
+      "stage": "fold",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1627
+      },
+      "control": {
+        "text": "- スクロール確認 18…",
+        "rect": {
+          "x": 366,
+          "y": 399.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 399.875,
+          "right": 381,
+          "bottom": 426.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 408.0625,
+          "width": 10,
+          "height": 10,
+          "top": 408.0625,
+          "right": 381,
+          "bottom": 418.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 413.3333435058594,
+        "target": {}
+      }
+    },
+    {
+      "stage": "unfold",
+      "scroll": {
+        "client": 390,
+        "width": 390,
+        "top": 1627
+      },
+      "control": {
+        "text": "- スクロール確認 18",
+        "rect": {
+          "x": 366,
+          "y": 399.875,
+          "width": 15,
+          "height": 26.390625,
+          "top": 399.875,
+          "right": 381,
+          "bottom": 426.265625,
+          "left": 366
+        },
+        "svg": {
+          "x": 371,
+          "y": 408.0625,
+          "width": 10,
+          "height": 10,
+          "top": 408.0625,
+          "right": 381,
+          "bottom": 418.0625,
+          "left": 371
+        }
+      },
+      "lastPointer": {
+        "type": "pointerdown",
+        "pointerType": "touch",
+        "x": 376.6666564941406,
+        "y": 413.3333435058594,
+        "target": {}
+      }
+    }
+  ]
+}

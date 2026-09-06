@@ -1,0 +1,2 @@
+FAIL: source cursor after paired selection is ch0, expected >= 2
+FAIL: source cursor after paired Redo is ch0, expected >= 2

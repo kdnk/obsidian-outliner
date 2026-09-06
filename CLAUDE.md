@@ -83,6 +83,8 @@ CodeMirror extensions and editor utilities. Registers keymaps, handles checkbox 
 
 ## Tests
 
+- For Computer Use tests in Live Preview, follow the caret-position verification procedure in `AGENTS.md` before entering test input.
+
 - For fold-scroll reserve changes, follow the real-Obsidian resize verification procedure in `AGENTS.md` (native chevron scroll retention).
 
 - **Unit tests** (`src/operations/__tests__/*.test.ts`, `src/services/__tests__/`) — use mock helpers from `src/__mocks__.ts` (`makeEditor`, `makeRoot`, `makeSettings`).

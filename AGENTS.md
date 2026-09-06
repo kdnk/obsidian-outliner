@@ -24,6 +24,7 @@
     - tag pushで起動したrelease workflowが成功し、同じversionのGitHub releaseが公開されたことを`gh` CLIで確認してください。
     - 中断したreleaseを再開するとき、default branchの`manifest.json`が示すversionに対応するtagまたはGitHub releaseだけが欠けている場合は、`npm version`を再実行して次versionへ進めないでください。現在のdefault branch commitで全テストを再実行し、そのcommitへ既存versionのannotated tagを`gh api`で作成してrelease workflowを完了させてください。
 - テストについて
+    - After using Computer Use `selectText()` to set up a Live Preview test, verify the intended CodeMirror line and character range via the vault-guarded Obsidian CLI before editing. AX text offsets may omit hidden Markdown; if they differ, position from a fresh screenshot and verify again.
     - local verificationは、CIと同じNode.js 22系のうち22.23.1以上を使ってください。Node.js 22.22.3や26.3.1では、Jestのfake timer解除後にglobal timerが消え、`obsidianRelay.test.ts`が`ReferenceError: setTimeout is not defined`で失敗します。このerrorが出た場合はsourceを変更する前に`node --version`を確認し、対応runtimeで再実行してください。
     - この環境ではNode.js 22.23.1を`n`で実行できます。globalのNode.jsを切り替えずに検証するときは`n exec 22.23.1 <command>`を使ってください。たとえばunit testは`SKIP_OBSIDIAN=1 n exec 22.23.1 npx jest ...`で実行できます。
     - macOSでfull testを実行する前に、`~/Library/Application Support/obsidian/Local Storage/leveldb/LOCK`のownerを`lsof`で確認してください。小文字の`obsidian` CLI processがownerの場合、global setupの`killall Obsidian`では終了しないため、そのowner processを終了し、lock解放を確認してからtestを開始してください。lock file自体は削除しないでください。
